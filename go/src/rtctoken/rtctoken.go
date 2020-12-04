@@ -17,8 +17,9 @@ const Version = "0.0.1"
 // Role Type
 type Role uint16
 
-// Role consts
+// Role consts, 0是作为token中不包含role属性使用的
 const (
+	Undefined = 0
 	Publisher = 1
 	Watcher   = 2
 	Live      = 3
@@ -51,11 +52,16 @@ func initToken(appId string, appToken string, roomName string, uid string) rtcTo
 }
 
 func (token *rtcToken) Build() (string, error) {
+	roleString := ""
+	if token.Role != Undefined {
+		roleString = fmt.Sprint(token.Role)
+	}
+
 	queries := url.Values{
 		"appId":    {token.AppId},
 		"roomName": {token.RoomName},
 		"uid":      {token.Uid},
-		"role":     {fmt.Sprint(token.Role)},
+		"role":     {roleString},
 		"ts":       {fmt.Sprint(token.Timestamp)},
 		"salt":     {token.Salt},
 		// "version":  {Version},
@@ -91,15 +97,16 @@ func (token *rtcToken) Build() (string, error) {
 //       Watcher = 2: (默认) 观众身份
 //       Live = 3: 互动直播
 // expTs: token有效时间, 单位秒 暂未支持
-func CreateToken(appId string, appToken string /*roomName string, uid string*/, role Role /*, expireSeconds uint32*/) (string, error) {
+func CreateToken(appId string, appToken string /*roomName string, uid string, role Role , expireSeconds uint32*/) (string, error) {
 	roomName := ""
 	uid := ""
 
 	token := initToken(appId, appToken, roomName, uid)
-	if role < Publisher || role >= RoleLast {
-		token.Role = Watcher
-	} else {
-		token.Role = role
-	}
+	// if role < Publisher || role >= RoleLast {
+	// 	token.Role = Undefined
+	// } else {
+	// 	token.Role = role
+	// }
+	token.Role = Undefined
 	return token.Build()
 }

@@ -13,11 +13,11 @@ func Test_RtcTokenCreate(t *testing.T) {
 	// channelName := ""
 	// uidZero := uint32(0)
 	// expiredTs := uint32(0)
-	token, err := CreateToken(appId, appToken, Watcher)
+	token, err := CreateToken(appId, appToken)
 
 	if err != nil {
 		t.Error(err)
 	}
 
-	fmt.Printf("token is %s", token)
+	fmt.Printf("token is %s\n", token)
 }
